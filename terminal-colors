@@ -63,7 +63,6 @@ class _staticmethods(type):
 class term16(object):
     """ Basic 16 color terminal.
     """
-
     __metaclass__ = _staticmethods
 
     def _label():
@@ -336,7 +335,7 @@ def convert88to256(n):
             "0->0, 1->1, 2->3, 3->5"
             return n and n + n-1 or n
         b = n - 16
-        x = b % 4 
+        x = b % 4
         y = (b / 4) % 4
         z = b / 16
         return 16 + m(x) + (6 * m(y) + 36 * m(z))
@@ -357,7 +356,7 @@ def convert256to88(n):
             else:
                 return int(_ratio*n)
         b = n - 16
-        x = b % 6 
+        x = b % 6
         y = (b / 6) % 6
         z = b / 36
         return 16 + m(x) + (4 * m(y) + 16 * m(z))
