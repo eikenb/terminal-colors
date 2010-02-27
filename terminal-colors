@@ -7,8 +7,8 @@ Displays 256, 88 and 16 color tables depending on what the terminal supports.
 Also provides for conversion between 256 and 88 color values.
 
 Note on coding style. I was playing around with using classes as simple
-namespaces (sort of like modules); ie. having classes that have all
-staticmethods and never get instatiated.
+module-esque namespaces; ie. having classes that have all staticmethods and
+never get instatiated.
 
 """
 
