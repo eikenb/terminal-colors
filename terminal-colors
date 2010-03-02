@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Version 1.0
+Version 1.1
 
 Displays 256, 88 and 16 color tables depending on what the terminal supports.
 Also provides for conversion between 256 and 88 color values.
@@ -16,32 +16,35 @@ import curses
 from optparse import OptionParser, make_option
 from math import ceil, sqrt
 
-option_list = [
-    make_option("-x", "--hex", action="store_true", dest="hex",
-        default=False, help="Include hex color numbers on chart."),
-    make_option("-n", "--numbers", action="store_true", dest="numbers",
-        default=False, help="Include color escape numbers on chart."),
-    make_option("-b", "--block", action="store_true", dest="block",
-        default=True, help="Display as block format (vs cube) [default]."),
-    make_option("-c", "--cube-slice", action="store_true", dest="cube",
-        default=False, help="Display as cube slices (vs block)."),
-    make_option("-v", "--vertical", action="store_true", dest="vertical",
-        default=True, help="Display with vertical orientation [default]."),
-    make_option("-z", "--horizontal", action="store_true", dest="horizontal",
-        default=False, help="Display with horizontal orientation."),
-    make_option("-l", "--rgb", action="store_true", dest="rgb",
-        default=False, help="Long format. RGB values text."),
-    make_option("-r", "--256to88", action="store", dest="reduce",
-        metavar="N", type="int",
-        help="Convert (reduce) 256 color value N to an 88 color value."),
-    make_option("-e", "--88to256", action="store", dest="expand",
-        metavar="N", type="int",
-        help="Convert (expand) 88 color value N to an 256 color value."),
-    ]
+def _get_opts():
+    option_list = [
+        make_option("-x", "--hex", action="store_true", dest="hex",
+            default=False, help="Include hex color numbers on chart."),
+        make_option("-n", "--numbers", action="store_true", dest="numbers",
+            default=False, help="Include color escape numbers on chart."),
+        make_option("-b", "--block", action="store_true", dest="block",
+            default=True, help="Display as block format (vs cube) [default]."),
+        make_option("-c", "--cube-slice", action="store_true", dest="cube",
+            default=False, help="Display as cube slices (vs block)."),
+        make_option("-v", "--vertical", action="store_true", dest="vertical",
+            default=True, help="Display with vertical orientation [default]."),
+        make_option("-z", "--horizontal", action="store_true",
+            dest="horizontal", default=False,
+            help="Display with horizontal orientation."),
+        make_option("-l", "--rgb", action="store_true", dest="rgb",
+            default=False, help="Long format. RGB values text."),
+        make_option("-r", "--256to88", action="store", dest="reduce",
+            metavar="N", type="int",
+            help="Convert (reduce) 256 color value N to an 88 color value."),
+        make_option("-e", "--88to256", action="store", dest="expand",
+            metavar="N", type="int",
+            help="Convert (expand) 88 color value N to an 256 color value."),
+        ]
 
-version = __doc__.split('\n')[1]
-parser = OptionParser(version=version, option_list=option_list)
-(options, args) = parser.parse_args()
+    version = __doc__.split('\n')[1]
+    parser = OptionParser(version=version, option_list=option_list)
+    (options, args) = parser.parse_args()
+    return options
 
 # output constants
 fg_escape = "\x1b[38;5;%dm"
@@ -56,7 +59,8 @@ class _staticmethods(type):
             staticmethod() deals correctly with class attributes.
         """
         for (n, f) in d.items():
-            d[n] = staticmethod(f)
+            if callable(f):
+                d[n] = staticmethod(f)
         return type.__new__(m, n, b, d)
 
 
@@ -371,6 +375,8 @@ def _terminal():
         return {16:term16, 88:term88, 256:term256}.get(num_colors, term16)
 
 def main():
+    global options
+    options = _get_opts()
     if options.reduce:
         v = convert256to88(options.reduce)
         # reconvert back to display reduction in context
