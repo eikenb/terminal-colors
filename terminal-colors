@@ -12,6 +12,7 @@ never get instatiated.
 
 """
 
+import sys
 import curses
 from optparse import OptionParser, make_option
 from math import ceil, sqrt
@@ -21,7 +22,7 @@ fg_escape = "\x1b[38;5;%dm"
 bg_escape = "\x1b[48;5;%dm"
 clear = "\x1b[0m"
 
-def _get_options():
+def _get_options(args):
     option_list = [
         make_option("-x", "--hex", action="store_true", dest="hex",
             default=False, help="Include hex color numbers on chart."),
@@ -48,7 +49,7 @@ def _get_options():
 
     version = __doc__.split('\n')[1]
     parser = OptionParser(version=version, option_list=option_list)
-    (options, args) = parser.parse_args()
+    (options, args) = parser.parse_args(args)
     return options
 
 class _staticmethods(type):
@@ -373,7 +374,7 @@ def _terminal():
 
 def main():
     global options
-    options = _get_options()
+    options = _get_options(sys.argv[1:])
     if options.reduce:
         v = convert256to88(options.reduce)
         # reconvert back to display reduction in context
