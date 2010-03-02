@@ -234,13 +234,6 @@ class term88(term16):
                 print ''.join(i for i in r)
             print
 
-    def _label():
-        if options.numbers:
-            return " %2d "
-        elif options.hex:
-            return " %2x "
-        return "  "
-
     def fg(label, n):
         if n < 80:
             fg = n < 48 and 15 or 0
