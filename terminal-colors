@@ -16,7 +16,7 @@ import curses
 from optparse import OptionParser, make_option
 from math import ceil, sqrt
 
-def _get_opts():
+def _get_options():
     option_list = [
         make_option("-x", "--hex", action="store_true", dest="hex",
             default=False, help="Include hex color numbers on chart."),
@@ -376,7 +376,7 @@ def _terminal():
 
 def main():
     global options
-    options = _get_opts()
+    options = _get_options()
     if options.reduce:
         v = convert256to88(options.reduce)
         # reconvert back to display reduction in context
