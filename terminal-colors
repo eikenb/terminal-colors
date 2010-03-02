@@ -16,6 +16,11 @@ import curses
 from optparse import OptionParser, make_option
 from math import ceil, sqrt
 
+# output constants
+fg_escape = "\x1b[38;5;%dm"
+bg_escape = "\x1b[48;5;%dm"
+clear = "\x1b[0m"
+
 def _get_options():
     option_list = [
         make_option("-x", "--hex", action="store_true", dest="hex",
@@ -45,11 +50,6 @@ def _get_options():
     parser = OptionParser(version=version, option_list=option_list)
     (options, args) = parser.parse_args()
     return options
-
-# output constants
-fg_escape = "\x1b[38;5;%dm"
-bg_escape = "\x1b[48;5;%dm"
-clear = "\x1b[0m"
 
 class _staticmethods(type):
     """ Got tired of adding @staticmethod in front of every method.
