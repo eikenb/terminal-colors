@@ -174,9 +174,9 @@ class term256(term16):
         """
         colors = term256._color_table()
         if options.cube:
-            _cube(colors)
+            _cube_display(colors)
         elif options.block:
-            _block(colors)
+            _block_display(colors)
         print
         print "Greyscale ramp:"
         greys  = term256._grey_table()
@@ -279,15 +279,17 @@ class term88(term16):
             print "4x4x4 color cube:"
             colors = term88._color_table()
             if options.cube:
-                _cube(colors)
+                _cube_display(colors)
             elif options.block:
-                _block(colors)
+                _block_display(colors)
             print
             print "Greyscale ramp:"
             greys  = term88._grey_table()
             print ''.join(i for i in greys)
 
-def _cube(colors):
+def _cube_display(colors):
+    """ Display color cube as color aligned flatten cube sides.
+    """
     if options.horizontal:
         def _horizontal(colors):
             size = int(sqrt(len(colors)))
@@ -313,7 +315,9 @@ def _cube(colors):
                     print
         _vertical(colors)
 
-def _block(colors):
+def _block_display(colors):
+    """ Display color cube as cube sides organized by color #s (default).
+    """
     size = int(sqrt(len(colors)))
     if not options.horizontal:
         for n in (n*size for n in range(size)):
