@@ -23,6 +23,8 @@ bg_escape = "\x1b[48;5;%dm"
 clear = "\x1b[0m"
 
 def _get_options(args):
+    """ Setup and parse options.
+    """
     option_list = [
         make_option("-x", "--hex", action="store_true", dest="hex",
             default=False, help="Include hex color numbers on chart."),
@@ -51,6 +53,9 @@ def _get_options(args):
     parser = OptionParser(version=version, option_list=option_list)
     (options, args) = parser.parse_args(args)
     return options
+
+# instantiate global options based on command arguments
+options = _get_options(sys.argv[1:])
 
 class _staticmethods(type):
     """ Got tired of adding @staticmethod in front of every method.
@@ -383,8 +388,6 @@ def _terminal():
         return {16:term16, 88:term88, 256:term256}.get(num_colors, term16)
 
 def main():
-    global options
-    options = _get_options(sys.argv[1:])
     if options.reduce:
         v = convert256to88(options.reduce)
         # reconvert back to display reduction in context
