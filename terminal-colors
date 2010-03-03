@@ -71,6 +71,8 @@ class term16(object):
     __metaclass__ = _staticmethods
 
     def _label():
+        """ color label
+        """
         if options.numbers:
             return " %2d "
         elif options.hex:
@@ -78,6 +80,8 @@ class term16(object):
         return "  "
 
     def fg(label, n):
+        """ foreground formatting
+        """
         fg = n < 8 and 15 or 0
         try:
             return fg_escape % fg + label % n + clear
@@ -85,6 +89,8 @@ class term16(object):
             return fg_escape % fg + label + clear
 
     def _color_table():
+        """ 16 color info
+        """
         label = term16._label()
         return [
                 [bg_escape % n + term16.fg(label, n) + clear
@@ -138,6 +144,8 @@ class term256(term16):
             print
 
     def _label():
+        """ color label for 256 color values
+        """
         if options.numbers:
             return "%3d "
         elif options.hex:
@@ -145,6 +153,8 @@ class term256(term16):
         return "  "
 
     def fg(label, n):
+        """ foreground formatting
+        """
         if n < 232:
             fg = n < 124 and 15 or 0
         else:
