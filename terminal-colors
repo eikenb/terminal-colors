@@ -57,6 +57,7 @@ def _get_options(args):
 # instantiate global options based on command arguments
 options = _get_options(sys.argv[1:])
 
+
 class _staticmethods(type):
     """ Got tired of adding @staticmethod in front of every method.
     """
@@ -111,6 +112,7 @@ class term16(object):
         colors = term16._color_table()
         for r in colors:
             print ''.join(i for i in r)
+
 
 class term256(term16):
     """ eg. xterm-256
@@ -295,6 +297,7 @@ class term88(term16):
             print "Greyscale ramp:"
             greys  = term88._grey_table()
             print ''.join(i for i in greys)
+
 
 def _cube_display(colors):
     """ Display color cube as color aligned flatten cube sides.
