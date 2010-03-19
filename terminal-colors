@@ -40,7 +40,7 @@ def _get_options(args):
             dest="horizontal", default=False,
             help="Display with horizontal orientation."),
         make_option("-l", "--rgb", action="store_true", dest="rgb",
-            default=False, help="Long format. RGB values text."),
+            default=False, help="Long format. RGB values as text."),
         make_option("-r", "--256to88", action="store", dest="reduce",
             metavar="N", type="int",
             help="Convert (reduce) 256 color value N to an 88 color value."),
