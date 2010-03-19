@@ -41,6 +41,8 @@ def _get_options(args):
             help="Display with horizontal orientation."),
         make_option("-l", "--rgb", action="store_true", dest="rgb",
             default=False, help="Long format. RGB values as text."),
+        make_option("-p", "--padding", action="store_true", dest="padding",
+            default=False, help="Add extra padding (helps discern colors)."),
         make_option("-r", "--256to88", action="store", dest="reduce",
             metavar="N", type="int",
             help="Convert (reduce) 256 color value N to an 88 color value."),
@@ -110,8 +112,10 @@ class term16(object):
         """
         print "System colors:"
         colors = term16._color_table()
+        padding='  ' if options.padding else ''
         for r in colors:
-            print ''.join(i for i in r)
+            print padding.join(i for i in r)
+            if options.padding: print
 
 
 class term256(term16):
@@ -144,10 +148,12 @@ class term256(term16):
         """ display colors with rgb hex info
         """
         colors = term256._rgb_color_table()
+        padding='  ' if options.padding else ''
         while colors:
             rows, colors = colors[:6], colors[6:]
             for r in zip(*rows):
-                print ''.join(i for i in r)
+                print padding.join(i for i in r)
+                if options.padding: print
             print
 
     def _label():
@@ -198,8 +204,10 @@ class term256(term16):
         print
         print "Greyscale ramp:"
         greys  = term256._grey_table()
+        padding='  ' if options.padding else ''
         for r in greys:
-            print ''.join(i for i in r)
+            print padding.join(i for i in r)
+            if options.padding: print
 
     def display():
         """ display 256 color info (+ 16 in compact format)
@@ -285,6 +293,7 @@ class term88(term16):
             print
             term88._rgb_display()
         else:
+            padding = '  ' if options.padding else ''
             term16.display()
             print
             print "4x4x4 color cube:"
@@ -296,12 +305,13 @@ class term88(term16):
             print
             print "Greyscale ramp:"
             greys  = term88._grey_table()
-            print ''.join(i for i in greys)
+            print padding.join(i for i in greys)
 
 
 def _cube_display(colors):
     """ Display color cube as color aligned flatten cube sides.
     """
+    padding = '  ' if options.padding else ''
     if options.horizontal:
         def _horizontal(colors):
             size = int(sqrt(len(colors)))
@@ -310,8 +320,10 @@ def _cube_display(colors):
             while colors:
                 rows, colors = colors[:size*2], colors[size*2:]
                 for n in range(size):
-                    print ''.join(i
+                    print padding.join(i
                             for i in rows[n]+tuple(reversed(rows[n+size])))
+                    if options.padding: print padding,
+                if options.padding: print
                 if colors: print
         _horizontal(colors)
     else: #options.vertical - default
@@ -323,13 +335,16 @@ def _cube_display(colors):
             for group in [top, bottom]:
                 for rows in group:
                     for r in rows:
-                        print ''.join(i for i in r),
+                        print padding.join(i for i in r),
+                        if options.padding: print padding,
+                    if options.padding: print
                     print
         _vertical(colors)
 
 def _block_display(colors):
     """ Display color cube as cube sides organized by color #s (default).
     """
+    padding = '  ' if options.padding else ''
     size = int(sqrt(len(colors)))
     if not options.horizontal:
         for n in (n*size for n in range(size)):
@@ -339,7 +354,9 @@ def _block_display(colors):
         rows, colors = colors[:half], colors[half:]
         for n in range(size):
             for r in rows[n:len(rows):size]:
-                print ''.join(i for i in r),
+                print padding.join(i for i in r),
+                if options.padding: print padding,
+            if options.padding: print
             print
         if colors: print
 
