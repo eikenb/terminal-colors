@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 """
+Author: John Eikenberry <jae@zhar.net>
+License: GPL 3.0 <http://www.gnu.org/licenses/gpl.txt>
 Version 1.1
 
 Displays 256, 88 and 16 color tables depending on what the terminal supports.
