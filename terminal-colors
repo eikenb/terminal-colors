@@ -2,8 +2,9 @@
 
 """
 Author: John Eikenberry <jae@zhar.net>
-License: GPL 3.0 <http://www.gnu.org/licenses/gpl.txt>
-Version 1.2
+License: GPL 3.0 (or later) <http://www.gnu.org/licenses/gpl.txt>
+Copyright (C) 2010
+Version 1.3
 
 My goal in writing this script was to provide all the functionality of all the
 various perl/sh scripts found around the web in one place with some additional
