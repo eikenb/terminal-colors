@@ -22,7 +22,9 @@ It also works as a utility for converting between 256 and 88 color values.
 
 Note on coding style. I was playing around with using classes as simple
 module-esque namespaces; ie. having classes that have all staticmethods and
-never get instatiated.
+never get instatiated. As it makes calls at the module level this script is not
+really importable, thus limiting reuse. I plan on fixing this as well as
+implementing some testing when I get time.
 
 """
 
