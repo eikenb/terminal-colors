@@ -30,7 +30,7 @@ implementing some testing when I get time.
 
 import sys
 import curses
-from optparse import OptionParser, make_option
+from optparse import OptionParser, OptionGroup, make_option
 from math import ceil, sqrt
 
 # output constants
@@ -42,23 +42,29 @@ def _get_options(args):
     """ Setup and parse options.
     """
     option_list = [
-        make_option("-x", "--hex", action="store_true", dest="hex",
-            default=False, help="Include hex color numbers on chart."),
-        make_option("-n", "--numbers", action="store_true", dest="numbers",
-            default=False, help="Include color escape numbers on chart."),
         make_option("-b", "--block", action="store_true", dest="block",
             default=True, help="Display as block format (vs cube) [default]."),
         make_option("-c", "--cube-slice", action="store_true", dest="cube",
             default=False, help="Display as cube slices (vs block)."),
+        make_option("-l", "--rgb", action="store_true", dest="rgb",
+            default=False, help="Long format. RGB values as text."),
+        make_option("-n", "--numbers", action="store_true", dest="numbers",
+            default=False, help="Include color escape numbers on chart."),
+        make_option("-p", "--padding", action="store_true", dest="padding",
+            default=False, help="Add extra padding (helps discern colors)."),
         make_option("-v", "--vertical", action="store_true", dest="vertical",
             default=True, help="Display with vertical orientation [default]."),
+        make_option("-x", "--hex", action="store_true", dest="hex",
+            default=False, help="Include hex color numbers on chart."),
         make_option("-z", "--horizontal", action="store_true",
             dest="horizontal", default=False,
             help="Display with horizontal orientation."),
-        make_option("-l", "--rgb", action="store_true", dest="rgb",
-            default=False, help="Long format. RGB values as text."),
-        make_option("-p", "--padding", action="store_true", dest="padding",
-            default=False, help="Add extra padding (helps discern colors)."),
+        ]
+
+    version = __doc__.split('\n')[1]
+    parser = OptionParser(version=version, option_list=option_list)
+
+    convert_option_list = [
         make_option("-r", "--256to88", action="store", dest="reduce",
             metavar="N", type="int",
             help="Convert (reduce) 256 color value N to an 88 color value."),
@@ -66,9 +72,10 @@ def _get_options(args):
             metavar="N", type="int",
             help="Convert (expand) 88 color value N to an 256 color value."),
         ]
+    group = OptionGroup(parser, "Conversion options")
+    group.add_options(option_list=convert_option_list)
+    parser.add_option_group(group)
 
-    version = __doc__.split('\n')[1]
-    parser = OptionParser(version=version, option_list=option_list)
     (options, args) = parser.parse_args(args)
     return options
 
