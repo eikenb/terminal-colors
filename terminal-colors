@@ -3,7 +3,7 @@
 """
 Author: John Eikenberry <jae@zhar.net>
 License: GPL 3.0 <http://www.gnu.org/licenses/gpl.txt>
-Version 1.1
+Version 1.2
 
 Displays 256, 88 and 16 color tables depending on what the terminal supports.
 Also provides for conversion between 256 and 88 color values.
@@ -153,7 +153,9 @@ class term256(term16):
         padding='  ' if options.padding else ''
         while colors:
             rows, colors = colors[:6], colors[6:]
-            for r in zip(*rows):
+            if not options.horizontal:
+                rows = zip(*rows)
+            for r in rows:
                 print padding.join(i for i in r)
                 if options.padding: print
             print
