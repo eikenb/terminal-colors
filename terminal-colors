@@ -1,30 +1,50 @@
 #!/usr/bin/env python
 
-"""
-Author: John Eikenberry <jae@zhar.net>
-License: GPL 3.0 (or later) <http://www.gnu.org/licenses/gpl.txt>
-Copyright (C) 2010
-Version 1.3
+"""1.3 John Eikenberry <jae@zhar.net> GPL 3.0+ http://zhar.net/projects/
 
-My goal in writing this script was to provide all the functionality of all the
-various perl/sh scripts found around the web in one place with some additional
-bells and whistles.
+Author
+    John Eikenberry <jae@zhar.net>
 
-It automatically detects 8, 16, 88, 256 color capabilities (via ncurses) and
-displays the appropriate color charts. It can display the colors as blocks or
-(2d) cubes optionally with color values overlaid in int or hex values.  It can
-show the full rgb text string as well. It can also show the display with a
-vertical (default) or horizontal orientation. It has the option of additional
-padding and supports -h --help as well.
+License
+    GPL 3.0 (or later) <http://www.gnu.org/licenses/gpl.txt>
 
-It also works as a utility for converting between 256 and 88 color values.
+Copyright
+    Copyright (C) 2010 John Eikenberry <jae@zhar.net>
 
+License
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
 
-Note on coding style. I was playing around with using classes as simple
-module-esque namespaces; ie. having classes that have all staticmethods and
-never get instatiated. As it makes calls at the module level this script is not
-really importable, thus limiting reuse. I plan on fixing this as well as
-implementing some testing when I get time.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+Description
+    My goal in writing this script was to provide all the functionality of all
+    the various perl/sh scripts found around the web in one place with some
+    additional bells and whistles.
+
+    It automatically detects 8, 16, 88, 256 color capabilities (via ncurses)
+    and displays the appropriate color charts. It can display the colors as
+    blocks or (2d) cubes optionally with color values overlaid in int or hex
+    values.  It can show the full rgb text string as well. It can also show the
+    display with a vertical (default) or horizontal orientation. It has the
+    option of additional padding and supports -h --help as well.
+
+    It also works as a utility for converting between 256 and 88 color values.
+
+Development
+    Note on coding style. I was playing around with using classes as simple
+    module-esque namespaces; ie. having classes that have all staticmethods and
+    never get instatiated. As it makes calls at the module level this script is
+    not really importable, thus limiting reuse. I plan on fixing this as well
+    as implementing some testing when I get time.
 
 """
 
@@ -61,7 +81,7 @@ def _get_options(args):
             help="Display with horizontal orientation."),
         ]
 
-    version = __doc__.split('\n')[1]
+    version = __doc__.split('\n')[0]
     parser = OptionParser(version=version, option_list=option_list)
 
     convert_option_list = [
