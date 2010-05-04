@@ -47,6 +47,7 @@ Development
     as implementing some testing when I get time.
 
 """
+__version__ = __doc__.split('\n')[0]
 
 import sys
 import curses
@@ -81,8 +82,7 @@ def _get_options(args):
             help="Display with horizontal orientation."),
         ]
 
-    version = __doc__.split('\n')[0]
-    parser = OptionParser(version=version, option_list=option_list)
+    parser = OptionParser(version=__version__, option_list=option_list)
 
     convert_option_list = [
         make_option("-r", "--256to88", action="store", dest="reduce",
