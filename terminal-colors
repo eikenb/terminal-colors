@@ -40,6 +40,9 @@ Development
     not really importable, thus limiting reuse. I plan on fixing this as well
     as implementing some testing when I get time.
 
+Contributors
+    Isaac Cammann <icammann@gmail.com> - cube display bugfix
+
 """
 __version__ = __doc__.split('\n')[0]
 
