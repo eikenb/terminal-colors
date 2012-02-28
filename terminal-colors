@@ -361,8 +361,7 @@ def _cube_display(colors):
                 for n in range(size):
                     print padding.join(i
                             for i in rows[n]+tuple(reversed(rows[n+size])))
-                    if options.padding: print padding,
-                if options.padding: print
+                    if options.padding: print padding
                 if colors: print
         _horizontal(colors)
     else: #options.vertical - default
