@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""1.4 John Eikenberry <jae@zhar.net> GPL-3+ http://zhar.net/projects/
+"""1.5 John Eikenberry <jae@zhar.net> GPL-3+ http://zhar.net/projects/
 
 Copyright
     Copyright (C) 2010 John Eikenberry <jae@zhar.net>
@@ -44,6 +44,8 @@ Contributors
     Isaac Cammann <icammann@gmail.com> - cube display bugfix
 
 """
+from __future__ import print_function
+
 __version__ = __doc__.split('\n')[0]
 
 import sys
@@ -150,12 +152,12 @@ class term16(object):
     def display():
         """ display 16 color info
         """
-        print "System colors:"
+        print("System colors:")
         colors = term16._color_table()
         padding='  ' if options.padding else ''
         for r in colors:
-            print padding.join(i for i in r)
-            if options.padding: print
+            print(padding.join(i for i in r))
+            if options.padding: print()
 
 
 class term256(term16):
@@ -194,9 +196,9 @@ class term256(term16):
             if not options.horizontal:
                 rows = zip(*rows)
             for r in rows:
-                print padding.join(i for i in r)
-                if options.padding: print
-            print
+                print(padding.join(i for i in r))
+                if options.padding: print()
+            print()
 
     def _label():
         """ color label for 256 color values
@@ -243,25 +245,25 @@ class term256(term16):
             _cube_display(colors)
         elif options.block:
             _block_display(colors)
-        print
-        print "Greyscale ramp:"
+        print()
+        print("Greyscale ramp:")
         greys  = term256._grey_table()
         padding='  ' if options.padding else ''
         for r in greys:
-            print padding.join(i for i in r)
-            if options.padding: print
+            print(padding.join(i for i in r))
+            if options.padding: print()
 
     def display():
         """ display 256 color info (+ 16 in compact format)
         """
         if options.rgb:
-            print "Xterm RGB values for 6x6x6 color cube and greyscale."
-            print
+            print("Xterm RGB values for 6x6x6 color cube and greyscale.")
+            print()
             term256._rgb_display()
         else:
             term16.display()
-            print
-            print "6x6x6 color cube:"
+            print()
+            print("6x6x6 color cube:")
             term256._compact_display()
 
 
@@ -299,8 +301,8 @@ class term88(term16):
         while colors:
             rows, colors = colors[:4], colors[4:]
             for r in zip(*rows):
-                print ''.join(i for i in r)
-            print
+                print(''.join(i for i in r))
+            print()
 
     def fg(label, n):
         if n < 80:
@@ -331,23 +333,23 @@ class term88(term16):
         """ display 16 + 88 color info
         """
         if options.rgb:
-            print "Xterm RGB values for 4x4x4 color cube and greyscale."
-            print
+            print("Xterm RGB values for 4x4x4 color cube and greyscale.")
+            print()
             term88._rgb_display()
         else:
             padding = '  ' if options.padding else ''
             term16.display()
-            print
-            print "4x4x4 color cube:"
+            print()
+            print("4x4x4 color cube:")
             colors = term88._color_table()
             if options.cube:
                 _cube_display(colors)
             elif options.block:
                 _block_display(colors)
-            print
-            print "Greyscale ramp:"
+            print()
+            print("Greyscale ramp:")
             greys  = term88._grey_table()
-            print padding.join(i for i in greys)
+            print(padding.join(i for i in greys))
 
 
 def _cube_display(colors):
@@ -362,10 +364,10 @@ def _cube_display(colors):
             while colors:
                 rows, colors = colors[:size*2], colors[size*2:]
                 for n in range(size):
-                    print padding.join(i
-                            for i in rows[n]+tuple(reversed(rows[n+size])))
-                    if options.padding: print padding
-                if colors: print
+                    print(padding.join(i
+                            for i in rows[n]+tuple(reversed(rows[n+size]))))
+                    if options.padding: print(padding)
+                if colors: print()
         _horizontal(colors)
     else: #options.vertical - default
         def _vertical(colors):
@@ -376,10 +378,10 @@ def _cube_display(colors):
             for group in [top, bottom]:
                 for rows in group:
                     for r in rows:
-                        print padding.join(i for i in r),
-                        if options.padding: print padding,
-                    if options.padding: print
-                    print
+                        print(padding.join(i for i in r), end=' ')
+                        if options.padding: print(padding, end=' ')
+                    if options.padding: print()
+                    print()
         _vertical(colors)
 
 def _block_display(colors):
@@ -391,15 +393,15 @@ def _block_display(colors):
         for n in (n*size for n in range(size)):
             colors[n:n+size] = zip(*colors[n:n+size])
     while colors:
-        half = size*(size/2)
+        half = size*(size//2)
         rows, colors = colors[:half], colors[half:]
         for n in range(size):
             for r in rows[n:len(rows):size]:
-                print padding.join(i for i in r),
-                if options.padding: print padding,
-            if options.padding: print
-            print
-        if colors: print
+                print(padding.join(i for i in r), end=' ')
+                if options.padding: print(padding, end=' ')
+            if options.padding: print()
+            print()
+        if colors: print()
 
 def convert88to256(n):
     """ 88 (4x4x4) color cube to 256 (6x6x6) color cube values
@@ -414,8 +416,8 @@ def convert88to256(n):
             return n and n + n-1 or n
         b = n - 16
         x = b % 4
-        y = (b / 4) % 4
-        z = b / 16
+        y = (b // 4) % 4
+        z = b // 16
         return 16 + m(x) + (6 * m(y) + 36 * m(z))
 
 def convert256to88(n):
@@ -426,7 +428,7 @@ def convert256to88(n):
     elif n > 231:
         if n < 234:
             return 0
-        return 80 + ((n - 234) / 3)
+        return 80 + ((n - 234) // 3)
     else:
         def m(n, _ratio=(4./6.)):
             if n < 2:
@@ -435,8 +437,8 @@ def convert256to88(n):
                 return int(_ratio*n)
         b = n - 16
         x = b % 6
-        y = (b / 6) % 6
-        z = b / 36
+        y = (b // 6) % 6
+        z = b // 36
         return 16 + m(x) + (4 * m(y) + 16 * m(z))
 
 def _terminal():
@@ -452,13 +454,13 @@ def main():
     if options.reduce:
         v = convert256to88(options.reduce)
         # reconvert back to display reduction in context
-        print "%s (equivalent to 256 value: %s)" % (v, convert88to256(v))
+        print("%s (equivalent to 256 value: %s)" % (v, convert88to256(v)))
     elif options.expand:
-        print convert88to256(options.expand)
+        print(convert88to256(options.expand))
     else:
         term = _terminal()
         if term is None:
-            print "Your terminal reports that it has no color support."
+            print("Your terminal reports that it has no color support.")
         else:
             term.display()
 
