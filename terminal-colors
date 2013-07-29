@@ -52,6 +52,7 @@ import sys
 import curses
 from optparse import OptionParser, OptionGroup, make_option
 from math import ceil, sqrt
+from functools import wraps
 
 # output constants
 fg_escape = "\x1b[38;5;%dm"
@@ -101,7 +102,6 @@ def _get_options(args):
 # instantiate global options based on command arguments
 options = _get_options(sys.argv[1:])
 
-
 class _staticmethods(type):
     """ Got tired of adding @staticmethod in front of every method.
     """
@@ -113,6 +113,12 @@ class _staticmethods(type):
             if callable(f):
                 d[n] = staticmethod(f)
         return type.__new__(m, n, b, d)
+
+def _cached(f):
+    """ Memoize function w/ no params
+    """
+    _cache = {}
+    return wraps(f)(lambda: _cache.setdefault(None, f()))
 
 
 class term16(object):
@@ -132,7 +138,7 @@ class term16(object):
     def fg(label, n):
         """ foreground formatting
         """
-        fg = n < 8 and 15 or 0
+        fg = 15 if n < 9 else 0
         try:
             return fg_escape % fg + label % n + clear
         except TypeError:
@@ -164,18 +170,23 @@ class term256(term16):
     """ eg. xterm-256
     """
 
+    @_cached
     def _rgb_lookup():
         """ color rgb lookup dict
         """
-        rgb = "#%02x%02x%02x"
         cincr = [0] + [95+40*n for n in range(5)]
-        color_rgb = [rgb % (i, j, k)
+        color_rgb = [rgb(i, j, k)
                 for i in cincr for j in cincr for k in cincr]
         color_rgb = dict(zip(range(16, len(color_rgb)+16), color_rgb))
-        greys = [rgb % (((8+n),)*3) for n in range(0, 240, 10)]
+        greys = [rgb(*((n,)*3)) for n in range(8, 248, 10)]
         greys = dict(zip(range(232, 256), greys))
         color_rgb.update(greys)
         return color_rgb
+
+    def _to_rgb(n):
+        """ Convert color value to rgb tuple.
+        """
+        return term256._rgb_lookup()[n]
 
     def _rgb_color_table():
         """ 256 color info
@@ -212,10 +223,8 @@ class term256(term16):
     def fg(label, n):
         """ foreground formatting
         """
-        if n < 232:
-            fg = n < 124 and 15 or 0
-        else:
-            fg = n < 244 and 15 or 0
+        color = term256._to_rgb(n)
+        fg = 16 if color.is_light() else 255
         try:
             return fg_escape % fg + label % n + clear
         except TypeError:
@@ -271,19 +280,24 @@ class term88(term16):
     """ xterm-88 or urxvt
     """
 
+    @_cached
     def _rgb_lookup():
         """ color rgb lookup dict
         """
-        rgb = "#%02x%02x%02x"
         cincr = [0, 0x8b, 0xcd, 0xff]
-        color_rgb = [rgb % (i, j, k)
+        color_rgb = [rgb(i, j, k)
                 for i in cincr for j in cincr for k in cincr]
         color_rgb = dict(zip(range(16, len(color_rgb)+16), color_rgb))
-        greys = [rgb % ((n,)*3)
+        greys = [rgb(*((n,)*3))
                 for n in [0x2e, 0x5c, 0x73, 0x8b, 0xa2, 0xb9, 0xd0, 0xe7]]
         greys = dict(zip(range(80, 88), greys))
         color_rgb.update(greys)
         return color_rgb
+
+    def _to_rgb(n):
+        """ Convert color value to rgb tuple.
+        """
+        return term88._rgb_lookup()[n]
 
     def _rgb_color_table():
         """ 256 color info
@@ -305,10 +319,8 @@ class term88(term16):
             print()
 
     def fg(label, n):
-        if n < 80:
-            fg = n < 48 and 15 or 0
-        else:
-            fg = n < 84 and 15 or 0
+        color = term88._to_rgb(n)
+        fg = 16 if color.is_light() else 87
         try:
             return fg_escape % fg + label % n + clear
         except TypeError:
@@ -350,6 +362,26 @@ class term88(term16):
             print("Greyscale ramp:")
             greys  = term88._grey_table()
             print(padding.join(i for i in greys))
+
+
+class rgb(tuple):
+    """ An RGB, (red, green, blue) tuple. Takes integers.
+    """
+    def __new__(cls, r, g, b):
+        """ We want 3 colors.
+        """
+        return super(rgb, cls).__new__(cls, (r,g,b))
+
+    def __str__(self):
+        """ Display in compact rgb format.
+        """
+        return "#%02x%02x%02x" % self
+
+    def is_light(self):
+        """ Is this color light (or dark).
+        """
+        intensity = self[0] + self[1] + self[2]
+        return intensity > (255 * 1.5)
 
 
 def _cube_display(colors):
