@@ -167,7 +167,7 @@ class term256(term16):
     def _rgb_lookup():
         """ color rgb lookup dict
         """
-        rgb = "%02x/%02x/%02x"
+        rgb = "#%02x%02x%02x"
         cincr = [0] + [95+40*n for n in range(5)]
         color_rgb = [rgb % (i, j, k)
                 for i in cincr for j in cincr for k in cincr]
@@ -274,7 +274,7 @@ class term88(term16):
     def _rgb_lookup():
         """ color rgb lookup dict
         """
-        rgb = "%02x/%02x/%02x"
+        rgb = "#%02x%02x%02x"
         cincr = [0, 0x8b, 0xcd, 0xff]
         color_rgb = [rgb % (i, j, k)
                 for i in cincr for j in cincr for k in cincr]
