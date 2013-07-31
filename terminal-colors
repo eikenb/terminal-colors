@@ -129,32 +129,21 @@ class term16(object):
     """
     __metaclass__ = _staticmethods
 
-    def _label():
-        """ color label
-        """
+    def label(n):
+        fgc = fg_escape % (15 if n < 9 else 0)
         if options.numbers:
-            return " %2d "
+            return fgc + " %2d " % n
         elif options.hex:
-            return " %2x "
-        return "  "
-
-    def fg(label, n):
-        """ foreground formatting
-        """
-        fg = 15 if n < 9 else 0
-        try:
-            return fg_escape % fg + label % n + clear
-        except TypeError:
-            return fg_escape % fg + label + clear
+            return fgc + " %2x " % n
+        return fgc + "  "
 
     def _color_table():
         """ 16 color info
         """
-        label = term16._label()
         return [
-                [bg_escape % n + term16.fg(label, n) + clear
+                [bg_escape % n + term16.label(n) + clear
                     for n in range(8)],
-                [bg_escape % n + term16.fg(label, n) + clear
+                [bg_escape % n + term16.label(n) + clear
                     for n in range(8,16)]
             ]
 
@@ -221,38 +210,28 @@ class term256(term16):
                 if options.padding: print()
             print()
 
-    def _label():
+    def label(n):
         """ color label for 256 color values
         """
-        if options.numbers:
-            return "%3d "
-        elif options.hex:
-            return " %2x "
-        return "  "
-
-    def fg(label, n):
-        """ foreground formatting
-        """
         color = term256._to_rgb(n)
-        fg = 16 if color.is_light() else 255
-        try:
-            return fg_escape % fg + label % n + clear
-        except TypeError:
-            return fg_escape % fg + label + clear
+        fgc = fg_escape % (16 if color.is_light() else 255)
+        if options.numbers:
+            return fgc + "%3d " % n
+        elif options.hex:
+            return fgc + " %2x " % n
+        return fgc + "  "
 
     def _color_table():
         """ compact 256 color info
         """
-        label = term256._label()
-        return [[bg_escape % n + term256.fg(label, n) + clear
+        return [[bg_escape % n + term256.label(n) + clear
                 for n in [i+j for j in range(6)]]
                     for i in range(16, 232, 6)]
 
     def _grey_table():
         """ compact grey table
         """
-        label = " " + term256._label()
-        return [[bg_escape % n + term256.fg(label, n) + clear
+        return [[bg_escape % n + term256.label(n) + clear
                 for n in [i+j for j in range(12)]]
                     for i in range(232, 256, 12)]
 
@@ -320,7 +299,7 @@ class term88(term16):
                     label_val % str(rgbl[n]) + clear
         else:
             render = lambda n: fg_escape % n + label_num % n + \
-                    fg_escape % (16 if rgbl[n].is_light() else 87) \
+                    fg_escape % (16 if rgbl[n].is_light(88) else 87) \
                     + bg_escape % n + label_val % str(rgbl[n]) + clear
         return [[render(n) for n in [i+j for j in range(4)]]
                     for i in range(16, 88, 4)]
@@ -335,27 +314,28 @@ class term88(term16):
                 print(''.join(i for i in r))
             print()
 
-    def fg(label, n):
+    def label(n):
+        """ color label for 256 color values
+        """
         color = term88._to_rgb(n)
-        fg = 16 if color.is_light() else 87
-        try:
-            return fg_escape % fg + label % n + clear
-        except TypeError:
-            return fg_escape % fg + label + clear
+        fgc = fg_escape % (16 if color.is_light() else 87)
+        if options.numbers:
+            return fgc + "%3d " % n
+        elif options.hex:
+            return fgc + " %2x " % n
+        return fgc + "  "
 
     def _color_table():
         """ 88 color info
         """
-        label = term88._label()
-        return [[bg_escape % n + term88.fg(label, n) + clear
+        return [[bg_escape % n + term88.label(n) + clear
                 for n in [i+j for j in range(4)]]
                     for i in range(16, 80, 4)]
 
     def _grey_table():
         """ 88 color grey info
         """
-        label = term88._label()
-        return [bg_escape % n + term88.fg(label, n) + clear
+        return [bg_escape % n + term88.label(n) + clear
                 for n in range(80, 88)]
 
     def display():
@@ -394,11 +374,11 @@ class rgb(tuple):
         """
         return "#%02x%02x%02x" % self
 
-    def is_light(self):
+    def is_light(self, thresh=255):
         """ Is this color light (or dark).
         """
         intensity = self[0] + self[1] + self[2]
-        return intensity > (255 * 1.5)
+        return intensity > (thresh * 1.5)
 
 
 def _cube_display(colors):
