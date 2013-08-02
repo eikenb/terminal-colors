@@ -104,6 +104,9 @@ def _get_options(args):
 
 # instantiate global options based on command arguments
 options = _get_options(sys.argv[1:])
+# don't allow -f by itself
+options.foreground = options.foreground and (
+        options.numbers or options.hex or options.rgb )
 
 class _staticmethods(type):
     """ Got tired of adding @staticmethod in front of every method.
@@ -133,29 +136,30 @@ class term16(object):
     """
     __metaclass__ = _staticmethods
 
-    def label(n):
-        fgc = fg_escape % (15 if n < 9 else 0)
+    def label(n, esc):
+        """ color label for 256 color values
+        """
         if options.numbers:
-            return fgc + " %2d " % n
+            return esc(n) + "%3d " % n
         elif options.hex:
-            return fgc + " %2x " % n
-        return fgc + "  "
+            return esc(n) + " %2x " % n
+        return esc(n) + "  "
 
-    def _color_table():
+    def _render():
         """ 16 color info
         """
-        return [
-                [bg_escape % n + term16.label(n) + clear
-                    for n in range(8)],
-                [bg_escape % n + term16.label(n) + clear
-                    for n in range(8,16)]
-            ]
+        if options.foreground:
+            esc = lambda n: fg_escape % n
+        else:
+            esc = lambda n: bg_escape % n + fg_escape % (15 if n < 9 else 0)
+        return [[term16.label(n, esc) + clear for n in range(8)],
+                [term16.label(n, esc) + clear for n in range(8,16)]]
 
     def display():
         """ display 16 color info
         """
         print("System colors:")
-        colors = term16._color_table()
+        colors = term16._render()
         padding='  ' if options.padding else ''
         for r in colors:
             print(padding.join(i for i in r))
@@ -170,6 +174,7 @@ class term256(term16):
     def _rgb_lookup():
         """ color rgb lookup dict
         """
+        # cincr is based on xterm/rxvt palette
         cincr = [0] + [95+40*n for n in range(5)]
         color_rgb = [rgb(i, j, k)
                 for i in cincr for j in cincr for k in cincr]
@@ -214,42 +219,38 @@ class term256(term16):
                 if options.padding: print()
             print()
 
-    def label(n):
-        """ color label for 256 color values
+    def _colors():
+        """ 256 color numbers
         """
-        color = term256._to_rgb(n)
-        fgc = fg_escape % (16 if color.is_light() else 255)
-        if options.numbers:
-            return fgc + "%3d " % n
-        elif options.hex:
-            return fgc + " %2x " % n
-        return fgc + "  "
+        return [[i+j for j in range(6)] for i in range(16, 232, 6)]
 
-    def _color_table():
+    def _greyscale():
+        """ 256 greyscale numbers
+        """
+        return [[i+j for j in range(12)] for i in range(232, 256, 12)]
+
+    def _render(palette):
         """ compact 256 color info
         """
-        return [[bg_escape % n + term256.label(n) + clear
-                for n in [i+j for j in range(6)]]
-                    for i in range(16, 232, 6)]
-
-    def _grey_table():
-        """ compact grey table
-        """
-        return [[bg_escape % n + term256.label(n) + clear
-                for n in [i+j for j in range(12)]]
-                    for i in range(232, 256, 12)]
+        if options.foreground:
+            esc = lambda n: fg_escape % n
+            render = lambda n: term256.label(n, esc) + clear
+        else:
+            esc = lambda n: fg_escape % \
+                    (16 if term256._to_rgb(n).is_light() else 255)
+            render = lambda n: bg_escape % n + term256.label(n, esc) + clear
+        return [[render(n) for n in i] for i in palette]
 
     def _compact_display():
         """ display colors in compact format
         """
-        colors = term256._color_table()
+        colors = term256._render(term256._colors())
         if options.cube:
             _cube_display(colors)
         elif options.block:
             _block_display(colors)
         print()
-        print("Greyscale ramp:")
-        greys  = term256._grey_table()
+        greys = term256._render(term256._greyscale())
         padding='  ' if options.padding else ''
         for r in greys:
             print(padding.join(i for i in r))
@@ -265,7 +266,7 @@ class term256(term16):
         else:
             term16.display()
             print()
-            print("6x6x6 color cube:")
+            print("6x6x6 color cube and greyscale:")
             term256._compact_display()
 
 
@@ -277,6 +278,7 @@ class term88(term16):
     def _rgb_lookup():
         """ color rgb lookup dict
         """
+        # cincr is based on rxvt palette
         cincr = [0, 0x8b, 0xcd, 0xff]
         color_rgb = [rgb(i, j, k)
                 for i in cincr for j in cincr for k in cincr]
@@ -293,7 +295,7 @@ class term88(term16):
         return term88._rgb_lookup()[n]
 
     def _rgb_color_table():
-        """ 256 color info
+        """ 88 color info
         """
         rgbl = term88._rgb_lookup()
         label_num = "% 4d: "
@@ -318,29 +320,30 @@ class term88(term16):
                 print(''.join(i for i in r))
             print()
 
-    def label(n):
-        """ color label for 256 color values
-        """
-        color = term88._to_rgb(n)
-        fgc = fg_escape % (16 if color.is_light() else 87)
-        if options.numbers:
-            return fgc + "%3d " % n
-        elif options.hex:
-            return fgc + " %2x " % n
-        return fgc + "  "
-
-    def _color_table():
+    def _render(palette):
         """ 88 color info
         """
-        return [[bg_escape % n + term88.label(n) + clear
-                for n in [i+j for j in range(4)]]
-                    for i in range(16, 80, 4)]
+        if options.foreground:
+            esc = lambda n: fg_escape % n
+            render = lambda n: term88.label(n, esc) + clear
+        else:
+            esc = lambda n: fg_escape % \
+                    (16 if term88._to_rgb(n).is_light() else 87)
+            render = lambda n: bg_escape % n + term88.label(n, esc) + clear
+        return [[render(n) for n in i] for i in palette]
+                #for n in [i+j for j in range(4)]]
+                    #for i in range(16, 80, 4)]
 
-    def _grey_table():
-        """ 88 color grey info
+    def _colors():
+        """ 88 color numbers
         """
-        return [bg_escape % n + term88.label(n) + clear
-                for n in range(80, 88)]
+        return [[i+j for j in range(4)] for i in range(16, 80, 4)]
+
+    def _greyscale():
+        """ 88 greyscale numbers
+        """
+        return [range(80,88)]
+
 
     def display():
         """ display 16 + 88 color info
@@ -353,16 +356,16 @@ class term88(term16):
             padding = '  ' if options.padding else ''
             term16.display()
             print()
-            print("4x4x4 color cube:")
-            colors = term88._color_table()
+            print("4x4x4 color cube and greyscale:")
+            colors = term88._render(term88._colors())
             if options.cube:
                 _cube_display(colors)
             elif options.block:
                 _block_display(colors)
             print()
-            print("Greyscale ramp:")
-            greys  = term88._grey_table()
-            print(padding.join(i for i in greys))
+            greys  = term88._render(term88._greyscale())
+            for r in greys:
+                print(padding.join(i for i in r))
 
 
 class rgb(tuple):
