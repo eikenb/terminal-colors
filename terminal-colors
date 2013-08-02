@@ -121,7 +121,11 @@ def _cached(f):
     """ Memoize function w/ no params
     """
     _cache = {}
-    return wraps(f)(lambda: _cache.setdefault(None, f()))
+    def cache():
+        if None not in _cache:
+            _cache[None] = f()
+        return _cache[None]
+    return cache
 
 
 class term16(object):
