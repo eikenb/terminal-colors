@@ -174,7 +174,7 @@ class term256(term16):
     def _rgb_lookup():
         """ color rgb lookup dict
         """
-        # cincr is based on xterm/rxvt palette
+        # color increment is based on xterm/rxvt palette
         cincr = [0] + [95+40*n for n in range(5)]
         color_rgb = [rgb(i, j, k)
                 for i in cincr for j in cincr for k in cincr]
@@ -278,7 +278,7 @@ class term88(term16):
     def _rgb_lookup():
         """ color rgb lookup dict
         """
-        # cincr is based on rxvt palette
+        # color increment is based on rxvt palette
         cincr = [0, 0x8b, 0xcd, 0xff]
         color_rgb = [rgb(i, j, k)
                 for i in cincr for j in cincr for k in cincr]
@@ -367,7 +367,6 @@ class term88(term16):
             for r in greys:
                 print(padding.join(i for i in r))
 
-
 class rgb(tuple):
     """ An RGB, (red, green, blue) tuple. Takes integers.
     """
@@ -381,11 +380,12 @@ class rgb(tuple):
         """
         return "#%02x%02x%02x" % self
 
-    def is_light(self, thresh=255):
+    def is_light(self):
         """ Is this color light (or dark).
         """
-        intensity = self[0] + self[1] + self[2]
-        return intensity > (thresh * 1.5)
+        red, green, blue = self[0], self[1], self[2]
+        intensity = red*0.2126 + green*0.7152 + blue*0.0722
+        return intensity > 127
 
 
 def _cube_display(colors):
