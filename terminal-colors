@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""1.5 John Eikenberry <jae@zhar.net> GPL-3+ http://zhar.net/projects/
+"""2.0 John Eikenberry <jae@zhar.net> GPL-3+ http://zhar.net/projects/
 
 Copyright
     Copyright (C) 2010-2013 John Eikenberry <jae@zhar.net>
@@ -42,6 +42,9 @@ Development
 
 Contributors
     Isaac Cammann <icammann@gmail.com> - cube display bugfix
+    Jan Larres <jan@majutsushi.net> - submitted patch for rgb display
+        - compact rgb display
+        - use of intensity to determine foreground contrast color
 
 """
 from __future__ import print_function
