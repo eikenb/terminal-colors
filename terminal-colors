@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""2.0 John Eikenberry <jae@zhar.net> GPL-3+ http://zhar.net/projects/
+"""2.1 John Eikenberry <jae@zhar.net> GPL-3+ http://zhar.net/projects/
 
 Copyright
     Copyright (C) 2010-2013 John Eikenberry <jae@zhar.net>
@@ -42,9 +42,10 @@ Development
 
 Contributors
     Isaac Cammann <icammann@gmail.com> - cube display bugfix
-    Jan Larres <jan@majutsushi.net> - submitted patch for rgb display
+    Jan Larres <jan@majutsushi.net> - submitted patches for..
         - compact rgb display
-        - use of intensity to determine foreground contrast color
+        - use of color intensity to determine foreground contrast color
+        - 16 color SGR ANSI chart
 
 """
 from __future__ import print_function
@@ -77,6 +78,9 @@ def _get_options(args):
             default=False, help="Long format. RGB values as text."),
         make_option("-n", "--numbers", action="store_true", dest="numbers",
             default=False, help="Include color escape numbers on chart."),
+        make_option("-o", "--basiccodes", action="store_true",
+            dest="basiccodes", default=False,
+            help="Display 16 color chart with SGR ANSI escape codes."),
         make_option("-p", "--padding", action="store_true", dest="padding",
             default=False, help="Add extra padding (helps discern colors)."),
         make_option("-v", "--vertical", action="store_true", dest="vertical",
@@ -157,6 +161,18 @@ class term16(object):
             esc = lambda n: bg_escape % n + fg_escape % (15 if n < 9 else 0)
         return [[term16.label(n, esc) + clear for n in range(8)],
                 [term16.label(n, esc) + clear for n in range(8,16)]]
+
+    def basiccodes():
+        text = "  gYw  "
+        esc_code = "\x1b[%sm"
+        print(' ' * 17 + '     '.join([str(40 + n) + "m" for n in range(8)]))
+        fg_codes = ['0', '1']
+        for i in range(30, 38):
+            fg_codes.extend([str(i), "1;%d" % i])
+        for fg in fg_codes:
+            print("%5sm " % fg + esc_code % fg + text + clear + ' ', end='')
+            print(' '.join([esc_code % fg + esc_code % bg + text + clear
+                            for bg in range(40, 48)]))
 
     def display():
         """ display 16 color info
@@ -501,7 +517,11 @@ def main():
         if term is None:
             print("Your terminal reports that it has no color support.")
         else:
-            term.display()
+            if options.basiccodes:
+                print("Basic 16 color chart with SGR ANSI escape codes.\n")
+                term16.basiccodes()
+            else:
+                term.display()
 
 if __name__ == "__main__":
     main()
