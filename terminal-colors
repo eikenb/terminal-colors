@@ -324,7 +324,7 @@ class term88(term16):
                     label_val % str(rgbl[n]) + clear
         else:
             render = lambda n: fg_escape % n + label_num % n + \
-                    fg_escape % (16 if rgbl[n].is_light(88) else 87) \
+                    fg_escape % (16 if rgbl[n].is_light() else 87) \
                     + bg_escape % n + label_val % str(rgbl[n]) + clear
         return [[render(n) for n in [i+j for j in range(4)]]
                     for i in range(16, 88, 4)]
