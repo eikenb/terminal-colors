@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""2.1 John Eikenberry <jae@zhar.net> GPL-3+ http://zhar.net/projects/
+"""2.2 John Eikenberry <jae@zhar.net> GPL-3+ http://zhar.net/projects/
 
 Copyright
     Copyright (C) 2010-2013 John Eikenberry <jae@zhar.net>
@@ -46,6 +46,7 @@ Contributors
         - compact rgb display
         - use of color intensity to determine foreground contrast color
         - 16 color SGR ANSI chart
+        - 88 color rgb display bugfix
 
 """
 from __future__ import print_function
