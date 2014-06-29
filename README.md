@@ -11,6 +11,5 @@ padding and supports -h --help as well.
 
 It also works as a utility for converting between 256 and 88 color values.
 
-In Debian you can install this via...
-`$ apt-get colortest-python`
+In Debian you can install this via... `$ apt-get install colortest-python`
 http://packages.debian.org/source/colortest-python
