@@ -41,7 +41,7 @@ Help output:
 
 Screenshots:
 ------------
-![default](https://github.com/eikenb/terminal-colors/screenshots/default.png)
-![numbered](https://github.com/eikenb/terminal-colors/screenshots/numbers.png)
-![long](https://github.com/eikenb/terminal-colors/screenshots/long.png)
-![padding](https://github.com/eikenb/terminal-colors/screenshots/padding.png)
+![default](https://github.com/eikenb/terminal-colors/raw/master/screenshots/default.png)
+![numbered](https://github.com/eikenb/terminal-colors/raw/master/screenshots/numbers.png)
+![long](https://github.com/eikenb/terminal-colors/raw/master/screenshots/long.png)
+![padding](https://github.com/eikenb/terminal-colors/raw/master/screenshots/padding.png)
