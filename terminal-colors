@@ -3,7 +3,7 @@
 """2.2 John Eikenberry <jae@zhar.net> GPL-3+ http://zhar.net/projects/
 
 Copyright
-    Copyright (C) 2010-2013 John Eikenberry <jae@zhar.net>
+    Copyright (C) 2010-2015 John Eikenberry <jae@zhar.net>
 
 License
     This program is free software; you can redistribute it and/or modify
@@ -57,7 +57,6 @@ import sys
 import curses
 from optparse import OptionParser, OptionGroup, make_option
 from math import ceil, sqrt
-from functools import wraps
 
 # output constants
 fg_escape = "\x1b[38;5;%dm"
@@ -107,26 +106,26 @@ def _get_options(args):
     group.add_options(option_list=convert_option_list)
     parser.add_option_group(group)
 
-    (options, args) = parser.parse_args(args)
-    return options
+    (opts, args) = parser.parse_args(args)
+    return opts
 
 # instantiate global options based on command arguments
 options = _get_options(sys.argv[1:])
 # don't allow -f by itself
 options.foreground = options.foreground and (
-        options.numbers or options.hex or options.rgb )
+        options.numbers or options.hex or options.rgb)
 
 class _staticmethods(type):
     """ Got tired of adding @staticmethod in front of every method.
     """
-    def __new__(m, n, b, d):
+    def __new__(mcs, n, b, d):
         """ turn all methods in to staticmethods.
             staticmethod() deals correctly with class attributes.
         """
         for (n, f) in d.items():
             if callable(f):
                 d[n] = staticmethod(f)
-        return type.__new__(m, n, b, d)
+        return type.__new__(mcs, n, b, d)
 
 def _cached(f):
     """ Memoize function w/ no params
@@ -161,7 +160,7 @@ class term16(object):
         else:
             esc = lambda n: bg_escape % n + fg_escape % (15 if n < 9 else 0)
         return [[term16.label(n, esc) + clear for n in range(8)],
-                [term16.label(n, esc) + clear for n in range(8,16)]]
+                [term16.label(n, esc) + clear for n in range(8, 16)]]
 
     def basiccodes():
         text = "  gYw  "
@@ -180,7 +179,7 @@ class term16(object):
         """
         print("System colors:")
         colors = term16._render()
-        padding='  ' if options.padding else ''
+        padding = '  ' if options.padding else ''
         for r in colors:
             print(padding.join(i for i in r))
             if options.padding: print()
@@ -229,7 +228,7 @@ class term256(term16):
         """ display colors with rgb hex info
         """
         colors = term256._rgb_color_table()
-        padding='  ' if options.padding else ''
+        padding = '  ' if options.padding else ''
         while colors:
             rows, colors = colors[:6], colors[6:]
             if not options.horizontal:
@@ -271,7 +270,7 @@ class term256(term16):
             _block_display(colors)
         print()
         greys = term256._render(term256._greyscale())
-        padding='  ' if options.padding else ''
+        padding = '  ' if options.padding else ''
         for r in greys:
             print(padding.join(i for i in r))
             if options.padding: print()
@@ -362,7 +361,7 @@ class term88(term16):
     def _greyscale():
         """ 88 greyscale numbers
         """
-        return [range(80,88)]
+        return [range(80, 88)]
 
 
     def display():
@@ -383,7 +382,7 @@ class term88(term16):
             elif options.block:
                 _block_display(colors)
             print()
-            greys  = term88._render(term88._greyscale())
+            greys = term88._render(term88._greyscale())
             for r in greys:
                 print(padding.join(i for i in r))
 
@@ -393,7 +392,7 @@ class rgb(tuple):
     def __new__(cls, r, g, b):
         """ We want 3 colors.
         """
-        return super(rgb, cls).__new__(cls, (r,g,b))
+        return super(rgb, cls).__new__(cls, (r, g, b))
 
     def __str__(self):
         """ Display in compact rgb format.
