@@ -57,6 +57,7 @@ import sys
 import curses
 from optparse import OptionParser, OptionGroup, make_option
 from math import ceil, sqrt
+from inspect import getdoc
 
 # output constants
 fg_escape = "\x1b[38;5;%dm"
@@ -83,6 +84,8 @@ def _get_options(args):
             help="Display 16 color chart with SGR ANSI escape codes."),
         make_option("-p", "--padding", action="store_true", dest="padding",
             default=False, help="Add extra padding (helps discern colors)."),
+        make_option("-t", "--test", action="store_true", dest="test",
+            default=False, help="Run tests."),
         make_option("-v", "--vertical", action="store_true", dest="vertical",
             default=True, help="Display with vertical orientation [default]."),
         make_option("-x", "--hex", action="store_true", dest="hex",
@@ -145,6 +148,13 @@ class term16(object):
 
     def label(n, esc):
         """ color label for 256 color values
+        >>> options.numbers = True
+        >>> term16.label(95, lambda n: '')
+        ' 95 '
+        >>> options.numbers = False
+        >>> options.hex = True
+        >>> term16.label(95, lambda n: '')
+        ' 5f '
         """
         if options.numbers:
             return esc(n) + "%3d " % n
@@ -154,6 +164,12 @@ class term16(object):
 
     def _render():
         """ 16 color info
+        >>> term16._render()[0][-1]
+        '\\x1b[48;5;7m\\x1b[38;5;15m  \\x1b[0m'
+        >>> len(term16._render())
+        2
+        >>> len(term16._render()[0])
+        8
         """
         if options.foreground:
             esc = lambda n: fg_escape % n
@@ -163,6 +179,8 @@ class term16(object):
                 [term16.label(n, esc) + clear for n in range(8, 16)]]
 
     def basiccodes():
+        """ Basic 16 color chart with SGR ANSI escape codes.
+        """
         text = "  gYw  "
         esc_code = "\x1b[%sm"
         print(' ' * 17 + '     '.join([str(40 + n) + "m" for n in range(8)]))
@@ -350,8 +368,6 @@ class term88(term16):
                     (16 if term88._to_rgb(n).is_light() else 87)
             render = lambda n: bg_escape % n + term88.label(n, esc) + clear
         return [[render(n) for n in i] for i in palette]
-                #for n in [i+j for j in range(4)]]
-                    #for i in range(16, 80, 4)]
 
     def _colors():
         """ 88 color numbers
@@ -506,7 +522,12 @@ def _terminal():
         return {16:term16, 88:term88, 256:term256}.get(num_colors, term16)
 
 def main():
-    if options.reduce:
+    if options.test:
+        print("Running tests...")
+        import doctest
+        doctest.testmod()
+        print("Done.")
+    elif options.reduce:
         v = convert256to88(options.reduce)
         # reconvert back to display reduction in context
         print("%s (equivalent to 256 value: %s)" % (v, convert88to256(v)))
@@ -518,7 +539,7 @@ def main():
             print("Your terminal reports that it has no color support.")
         else:
             if options.basiccodes:
-                print("Basic 16 color chart with SGR ANSI escape codes.\n")
+                print(getdoc(term16.basiccodes))
                 term16.basiccodes()
             else:
                 term.display()
