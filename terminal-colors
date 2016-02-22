@@ -79,8 +79,8 @@ def _get_options(args):
             default=False, help="Long format. RGB values as text."),
         make_option("-n", "--numbers", action="store_true", dest="numbers",
             default=False, help="Include color escape numbers on chart."),
-        make_option("-o", "--basiccodes", action="store_true",
-            dest="basiccodes", default=False,
+        make_option("-o", "--ansicodes", action="store_true",
+            dest="ansicodes", default=False,
             help="Display 16 color chart with SGR ANSI escape codes."),
         make_option("-p", "--padding", action="store_true", dest="padding",
             default=False, help="Add extra padding (helps discern colors)."),
@@ -178,19 +178,42 @@ class term16(object):
         return [[term16.label(n, esc) + clear for n in range(8)],
                 [term16.label(n, esc) + clear for n in range(8, 16)]]
 
-    def basiccodes():
-        """ Basic 16 color chart with SGR ANSI escape codes.
+    def ansicodes():
+        """ base 16 SGR ANSI escape codes
+        >>> term16.ansicodes()[0][:6]
+        ['    0m ', '    1m ', '   30m ', ' 1;30m ', '   31m ', ' 1;31m ']
+        >>> term16.ansicodes()[1][:6]
+        ['      ', '   _   ', '  40m  ', '  41m  ', '  42m  ', '  43m  ']
+        >>> len(term16.ansicodes()[2])
+        18
+        >>> term16.ansicodes()[2][17][0]
+        '\\x1b[1;37m\\x1b[_  gYw  \\x1b[0m'
         """
-        text = "  gYw  "
-        esc_code = "\x1b[%sm"
-        print(' ' * 17 + '     '.join([str(40 + n) + "m" for n in range(8)]))
-        fg_codes = ['0', '1']
-        for i in range(30, 38):
-            fg_codes.extend([str(i), "1;%d" % i])
-        for fg in fg_codes:
-            print("%5sm " % fg + esc_code % fg + text + clear + ' ', end='')
-            print(' '.join([esc_code % fg + esc_code % bg + text + clear
-                            for bg in range(40, 48)]))
+        fg_codes = ['0m', '1m'] + [fg for pair in
+            [["{}m".format(i), "1;{}m".format(i)] for i in range(30, 38)]
+            for fg in pair]
+        bg_codes = ["_"] + ["{}m".format(n) for n in range(40, 48)]
+
+        x_labels = ["%6s " % fg for fg in fg_codes]
+        y_labels = [' ' * 6]
+        y_labels.extend(["{: ^7}".format(bg) for bg in bg_codes])
+
+        text, esc_code = "  gYw  ", "\x1b[%s"
+
+        codes = [[esc_code % fg + esc_code % bg + text + clear
+                            for bg in bg_codes] for fg in fg_codes]
+
+        return x_labels, y_labels, codes
+
+    def ansicodes_display():
+        """ 16 SGR ANSI escape codes in traditional format
+        """
+        x_labels, y_labels, codes = term16.ansicodes()
+
+        print(' '.join(y_labels))
+        for i in range(len(codes)):
+            print(x_labels[i], end='')
+            print(' '.join(codes[i]))
 
     def display():
         """ display 16 color info
@@ -538,9 +561,9 @@ def main():
         if term is None:
             print("Your terminal reports that it has no color support.")
         else:
-            if options.basiccodes:
-                print(getdoc(term16.basiccodes))
-                term16.basiccodes()
+            if options.ansicodes:
+                print(getdoc(term16.ansicodes_display))
+                term16.ansicodes_display()
             else:
                 term.display()
 
