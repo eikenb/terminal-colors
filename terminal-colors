@@ -213,9 +213,9 @@ class term16(object):
         x_labels, y_labels, codes = term16.ansicodes()
 
         print(' '.join(y_labels))
-        for i in range(len(codes)):
+        for i, code in enumerate(codes):
             print(x_labels[i], end='')
-            print(' '.join(codes[i]))
+            print(' '.join(code))
 
     def display():
         """ display 16 color info
@@ -313,7 +313,7 @@ class term256(term16):
             esc = lambda n: fg_escape % \
                     (16 if term256._to_rgb(n).is_light() else 255)
             render = lambda n: bg_escape % n + term256.label(n, esc) + clear
-        return [[render(n) for n in i] for i in palette]
+        return [[render(n) for n in i] for i in iter(palette)]
 
     def _compact_display():
         """ display colors in compact format
@@ -404,7 +404,7 @@ class term88(term16):
             esc = lambda n: fg_escape % \
                     (16 if term88._to_rgb(n).is_light() else 87)
             render = lambda n: bg_escape % n + term88.label(n, esc) + clear
-        return [[render(n) for n in i] for i in palette]
+        return [[render(n) for n in i] for i in iter(palette)]
 
     def _colors():
         """ 88 color numbers
@@ -583,4 +583,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
