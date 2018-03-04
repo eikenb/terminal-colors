@@ -6,8 +6,7 @@ It automatically detects 8, 16, 88, 256 color capabilities (via ncurses) and
 displays the appropriate color charts. It can display the colors as blocks or
 (2d) cubes optionally with color values overlaid in int or hex values.  It can
 show the full rgb text string as well. It can also show the display with a
-vertical (default) or horizontal orientation. It has the option of additional
-padding and supports -h --help as well.
+vertical (default) or horizontal orientation or have additional padding.
 
 It also works as a utility for converting between 256 and 88 color values.
 
