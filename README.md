@@ -10,8 +10,15 @@ vertical (default) or horizontal orientation or have additional padding.
 
 It also works as a utility for converting between 256 and 88 color values.
 
-In Debian you can install this via... `$ apt-get install colortest-python`
+Installation
+------------
+
+In Debian (and childred) you can install this via...
+    $ apt-get install colortest-python
 http://packages.debian.org/source/colortest-python
+
+Otherwise pip works...
+    $ pip install terminal-colors
 
 Help output:
 ------------
