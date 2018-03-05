@@ -1,13 +1,24 @@
-from setuptools import setup
+from setuptools import setup, find_packages
+import os
+
+def description():
+    path = os.path.join(os.path.dirname(__file__), "README.md")
+    with open(path) as readme:
+        lines = []
+        for line in readme:
+            if line.startswith("Installation"): break
+            lines.append(line)
+        return "".join(lines).strip()
 
 setup(name='terminal-colors',
 	version='2.3',
 	description='Utility to test color capabilities of terminal.',
-	long_description=open('README.md').read(),
+	long_description=description(),
 	author='John Eikenberry',
 	author_email='jae@zhar.net',
     url="https://github.com/eikenb/terminal-colors",
     scripts=['terminal-colors'],
+    packages=find_packages(),
 	classifiers=[
         'Development Status :: 6 - Mature',
         'Intended Audience :: End Users/Desktop',
