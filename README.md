@@ -13,11 +13,14 @@ It also works as a utility for converting between 256 and 88 color values.
 Installation
 ------------
 
-In Debian (and childred) you can install this via...
+In Debian (and children) you can install this via...
+
     $ apt-get install colortest-python
+
 http://packages.debian.org/source/colortest-python
 
 Otherwise pip works...
+
     $ pip install terminal-colors
 
 Help output:
