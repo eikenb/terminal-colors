@@ -26,7 +26,7 @@ Otherwise pip works...
 Help output:
 ------------
 
-    Usage: colortest-python [options]
+    Usage: terminal-colors [options]
 
     Options:
       -b, --block          Display as block format (vs cube) [default].
