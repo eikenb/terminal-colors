@@ -11,7 +11,7 @@ def description():
         return "".join(lines).strip()
 
 setup(name='terminal-colors',
-	version='2.3.0',
+	version='3.0.0',
 	description='Utility to test color capabilities of terminal.',
 	long_description=description(),
 	author='John Eikenberry',
