@@ -185,11 +185,11 @@ class term16(object):
         >>> term16.ansicodes()[0][:6]
         ['    0m ', '    1m ', '   30m ', ' 1;30m ', '   31m ', ' 1;31m ']
         >>> term16.ansicodes()[1][:6]
-        ['      ', '   _   ', '  40m  ', '  41m  ', '  42m  ', '  43m  ']
+        ['      ', '  _  ', ' 40m ', ' 41m ', ' 42m ', ' 43m ']
         >>> len(term16.ansicodes()[2])
         18
         >>> term16.ansicodes()[2][17][0]
-        '\\x1b[1;37m\\x1b[_  gYw  \\x1b[0m'
+        '\\x1b[1;37m\\x1b[_ gYw \\x1b[0m'
         """
         fg_codes = ['0m', '1m'] + [fg for pair in
             [["{}m".format(i), "1;{}m".format(i)] for i in range(30, 38)]
