@@ -21,7 +21,7 @@ http://packages.debian.org/source/colortest-python
 
 Otherwise pip works...
 
-    $ pip install terminal-colors
+    $ python3 -m pip install terminal-colors
 
 Help output:
 ------------
