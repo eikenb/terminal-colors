@@ -1,6 +1,6 @@
 My goal in writing this script was to provide all the functionality of all the
-various perl/sh scripts found around the web in one place with some additional
-bells and whistles.
+various terminal color displaying scripts found around the web in one place
+with some additional bells and whistles.
 
 It automatically detects 8, 16, 88, 256 color capabilities (via ncurses) and
 displays the appropriate color charts. It can display the colors as blocks or
