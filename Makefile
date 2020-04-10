@@ -13,6 +13,10 @@ release:
 	@echo
 	@echo Then follow instructions here to GPG sign it for Debian.
 	@echo https://wiki.debian.org/Creating%20signed%20GitHub%20releases
+	@echo
+	@echo Basically, download the tar.gz and zip, run this...
+	@echo `gpg --armor --detach-sign terminal-colors-*.tar.gz`
+	@echo And upload the resulting .asc file.
 
 clean:
 	rm -rf build dist terminal_colors.egg-info
