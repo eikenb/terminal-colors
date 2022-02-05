@@ -555,8 +555,7 @@ def _terminal():
     """
     curses.setupterm()
     num_colors = curses.tigetnum('colors')
-    if num_colors > 0:
-        return {16:term16, 88:term88, 256:term256}.get(num_colors, term16)
+    return {16:term16, 88:term88, 256:term256}.get(num_colors, term16)
 
 def main():
     if options.test:
@@ -572,14 +571,11 @@ def main():
         print(convert88to256(options.expand))
     else:
         term = _terminal()
-        if term is None:
-            print("Your terminal reports that it has no color support.")
+        if options.ansicodes:
+            print(getdoc(term16.ansicodes_display))
+            term16.ansicodes_display()
         else:
-            if options.ansicodes:
-                print(getdoc(term16.ansicodes_display))
-                term16.ansicodes_display()
-            else:
-                term.display()
+            term.display()
 
 if __name__ == "__main__":
     main()
