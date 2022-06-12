@@ -1,0 +1,6 @@
+.gitattributes export-ignore
+.gitignore export-ignore
+Makefile export-ignore
+MANIFEST.in export-ignore
+screenshots/ export-ignore
+setup.py export-ignore
