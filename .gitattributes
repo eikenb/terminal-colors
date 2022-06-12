@@ -2,5 +2,6 @@
 .gitignore export-ignore
 Makefile export-ignore
 MANIFEST.in export-ignore
+README.md export-ignore
 screenshots/ export-ignore
 setup.py export-ignore
