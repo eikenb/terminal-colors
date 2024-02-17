@@ -39,6 +39,7 @@ Help output:
       -v, --vertical       Display with vertical orientation [default].
       -x, --hex            Include hex color numbers on chart.
       -z, --horizontal     Display with horizontal orientation.
+      -m, --force-term=N   Skip termcap color detection and force N colors.
       --version            show program's version number and exit
       -h, --help           show this help message and exit
 

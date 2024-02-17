@@ -1,5 +1,6 @@
 from setuptools import setup, find_packages
 import os
+import sys
 
 def description():
     path = os.path.join(os.path.dirname(__file__), "README.md")
@@ -10,16 +11,20 @@ def description():
             lines.append(line)
         return "".join(lines).strip()
 
-setup(name='terminal-colors',
-	version='3.0.0',
-	description='Utility to test color capabilities of terminal.',
-	long_description=description(),
-	author='John Eikenberry',
-	author_email='jae@zhar.net',
+install_requires = [
+    "windows-curses ; platform_system=='Windows'",
+]
+
+setup(
+    name='terminal-colors',
+    version='3.0.3',
+    description='Utility to test color capabilities of terminal.',
+    long_description=description(),
+    author='John Eikenberry',
+    author_email='jae@zhar.net',
     url="https://github.com/eikenb/terminal-colors",
-    scripts=['terminal-colors'],
-    packages=find_packages(),
-	classifiers=[
+    packages=["terminal_colors"],
+    classifiers=[
         'Development Status :: 6 - Mature',
         'Intended Audience :: End Users/Desktop',
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
@@ -29,4 +34,6 @@ setup(name='terminal-colors',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 3',
     ],
+    install_requires=install_requires,
+    entry_points={'console_scripts': ['terminal-colors = terminal_colors.terminal_colors:main']},
 )

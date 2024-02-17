@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""3.0.1 John Eikenberry <jae@zhar.net> GPL-3+ http://zhar.net/projects/
+"""3.0.3 John Eikenberry <jae@zhar.net> GPL-3+ http://zhar.net/projects/
 
 Copyright
     Copyright (C) 2010-2020 John Eikenberry <jae@zhar.net>
@@ -47,6 +47,12 @@ Contributors
         - use of color intensity to determine foreground contrast color
         - 16 color SGR ANSI chart
         - 88 color rgb display bugfix
+    Mike Clark <mike.clark.8192@gmail.com> - support for Windows:
+        - declared dependency on windows-curses (only when installing on Windows)
+        - added --force-term N to test for color support outside of tigetnum('colors')
+        - rely on PyPA entry_points= to setup cross-platform `terminal-colors` command,
+          (which required renaming the script to make it addressable as a module)
+
 
 """
 from __future__ import print_function
@@ -55,7 +61,7 @@ __version__ = __doc__.split('\n')[0]
 
 import sys
 import curses
-from optparse import OptionParser, OptionGroup, make_option
+from optparse import OptionParser, OptionGroup, Option, make_option
 from math import ceil, sqrt
 from inspect import getdoc
 from functools import wraps
@@ -94,6 +100,9 @@ def _get_options(args):
         make_option("-z", "--horizontal", action="store_true",
             dest="horizontal", default=False,
             help="Display with horizontal orientation."),
+        make_option("-m", "--force-term", action="store", 
+            metavar="N", choices=list(map(str, TERM_TABLE)),
+            help="Skip termcap color detection and force N colors."),
         ]
 
     parser = OptionParser(version=__version__, option_list=option_list)
@@ -111,13 +120,10 @@ def _get_options(args):
     parser.add_option_group(group)
 
     (opts, args) = parser.parse_args(args)
-    return opts
+    # OptionParser does not allow combining choices= with type="int", so...
+    opts.force_term = None if opts.force_term is None else int(opts.force_term)
 
-# instantiate global options based on command arguments
-options = _get_options(sys.argv[1:])
-# don't allow -f by itself
-options.foreground = options.foreground and (
-        options.numbers or options.hex or options.rgb)
+    return opts
 
 class _staticmethods(type):
     """ Got tired of adding @staticmethod in front of every method.
@@ -554,10 +560,22 @@ def _terminal():
         terminal class
     """
     curses.setupterm()
-    num_colors = curses.tigetnum('colors')
-    return {16:term16, 88:term88, 256:term256}.get(num_colors, term16)
+    if options.force_term is None:
+        num_colors = curses.tigetnum('colors')
+    else:
+        num_colors = options.force_term
+    if num_colors > 0:
+        return TERM_TABLE.get(num_colors, term16)
 
+
+TERM_TABLE = {16:term16, 88:term88, 256:term256}
 def main():
+    global options
+    # instantiate global options based on command arguments
+    options = _get_options(sys.argv[1:])
+    # don't allow -f by itself
+    options.foreground = options.foreground and (
+            options.numbers or options.hex or options.rgb)
     if options.test:
         print("Running tests...")
         import doctest
@@ -571,11 +589,15 @@ def main():
         print(convert88to256(options.expand))
     else:
         term = _terminal()
-        if options.ansicodes:
-            print(getdoc(term16.ansicodes_display))
-            term16.ansicodes_display()
+        if term is None:
+            print("Your terminal reports that it has no color support.")
+            print("Try using -m to force a color depth value.")
         else:
-            term.display()
+            if options.ansicodes:
+                print(getdoc(term16.ansicodes_display))
+                term16.ansicodes_display()
+            else:
+                term.display()
 
 if __name__ == "__main__":
     main()
